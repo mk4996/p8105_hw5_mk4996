@@ -33,12 +33,21 @@ sim_p1 |>
 ```
 
 # Problem 2
+
+## one trial
 ```{r}
+n     = 30
+sigma = 5
+alpha = 0.05
+mu_grid = c(1,2,3,4,5,6)
 
-```
-
-# Problem 3
-```{r}
-
+one_trial = function(mu) {
+  x = rnorm(n, mean = mu, sd = sigma)
+  tt = t.test(x, mu = 0)
+  tibble(
+    mu_hat   = unname(tt$estimate),  
+    p_value  = tt$p.value
+  )
+}
 ```
 
