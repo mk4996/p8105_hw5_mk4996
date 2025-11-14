@@ -71,28 +71,3 @@ power_df |>
        title = "One-sample t-test power vs effect size")
 ```
 
-# Compare average mu_hat (overall vs significant)
-```{r}
-avg_df = sim_p2 |>
-  group_by(mu_true) |>
-  summarize(
-    avg_mu_hat_all   = mean(mu_hat),
-    avg_mu_hat_reject = mean(mu_hat[p_value < alpha]),
-    .groups = "drop"
-  )
-
-avg_df |>
-  pivot_longer(-mu_true, names_to = "which", values_to = "avg_mu_hat") |>
-  ggplot(aes(x = mu_true, y = avg_mu_hat, color = which)) +
-  geom_line() + geom_point() +
-  labs(x = "True mean (mu)", y = "Average of mu_hat",
-       title = "Selection-induced bias when conditioning on rejection")
-```
-
-# Problem 3
-```{r}
-
-```
-
-
-
