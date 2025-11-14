@@ -113,6 +113,15 @@ city_summary = homi |>
     .groups = "drop"
   )
 
+one_prop = function(x_success, x_total) {
+  pt = prop.test(x_success, x_total)
+  tibble(
+    prop_hat = unname(pt$estimate),
+    ci_low   = pt$conf.int[1],
+    ci_high  = pt$conf.int[2]
+  )
+}
+
 
 ```
 
