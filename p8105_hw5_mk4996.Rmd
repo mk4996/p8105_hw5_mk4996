@@ -58,7 +58,7 @@ sim_p2 = expand_grid(mu_true = mu_grid, iter = 1:5000) |>
   unnest(res)
 ```
 
-# Compute power and visualize
+## Compute power and visualize
 ```{r}
 power_df = sim_p2 |>
   group_by(mu_true) |>
@@ -71,7 +71,7 @@ power_df |>
        title = "One-sample t-test power vs effect size")
 ```
 
-# Compare average mu_hat (overall vs significant)
+## Compare average mu_hat (overall vs significant)
 ```{r}
 avg_df = sim_p2 |>
   group_by(mu_true) |>
@@ -88,4 +88,11 @@ avg_df |>
   labs(x = "True mean (mu)", y = "Average of mu_hat",
        title = "Selection-induced bias when conditioning on rejection")
 ```
+
+* **Is the sample average of 𝜇̂ across tests for which the null is rejected approximately equal to the true value of 𝜇? Why or why not?**
+
+No, the sample average of 𝜇̂ among rejected tests is not equal to the true value of 𝜇.
+As shown in the second plot, the blue line (significant results) is higher than the red line for small and moderate true means, indicating an upward bias.
+This occurs because only extreme sample means tend to be significant.
+As the true mean increases and power approaches 1, this bias becomes smaller.
 
