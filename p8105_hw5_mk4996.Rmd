@@ -122,6 +122,11 @@ one_prop = function(x_success, x_total) {
   )
 }
 
+city_est = city_summary |>
+  mutate(test = map2(n_unsolved, n_total, one_prop)) |>
+  unnest(test)
+
+
 
 ```
 
