@@ -34,7 +34,7 @@ sim_p1 |>
 
 # Problem 2
 
-## one trial
+## One trial
 ```{r}
 n     = 30
 sigma = 5
