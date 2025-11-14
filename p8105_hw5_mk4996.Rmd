@@ -96,3 +96,25 @@ As shown in the second plot, the blue line (significant results) is higher than 
 This occurs because only extreme sample means tend to be significant.
 As the true mean increases and power approaches 1, this bias becomes smaller.
 
+# Problem 3
+```{r}
+homi = read_csv("./homicide-data.csv")
+
+homi = homi |>
+  mutate(city_state = paste(city, state, sep = ", "))
+
+unsolved_levels = c("Closed without arrest", "Open/No arrest")
+city_summary = homi |>
+  mutate(unsolved = disposition %in% unsolved_levels) |>
+  group_by(city_state) |>
+  summarize(
+    n_total    = n(),
+    n_unsolved = sum(unsolved, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+
+```
+
+
+
