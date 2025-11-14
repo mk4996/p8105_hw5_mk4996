@@ -126,7 +126,15 @@ city_est = city_summary |>
   mutate(test = map2(n_unsolved, n_total, one_prop)) |>
   unnest(test)
 
-
+city_est |>
+  arrange(prop_hat) |>
+  mutate(city_state = factor(city_state, levels = city_state)) |>
+  ggplot(aes(x = city_state, y = prop_hat)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0) +
+  coord_flip() +
+  labs(x = NULL, y = "Proportion unsolved (with 95% CI)",
+       title = "Unsolved homicide proportion by city")
 
 ```
 
