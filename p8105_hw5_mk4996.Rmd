@@ -138,5 +138,11 @@ city_est |>
 
 ```
 
+* **Comment**
+
+The plot shows the estimated proportions of unsolved homicides with 95% confidence intervals for each city.
+There is substantial variation across cities, for example, Baltimore, MD and Chicago, IL have some of the highest proportions of unsolved cases, while Richmond, VA and Tulsa, AL have the lowest.
+Cities with small numbers of total homicides, such as Tulsa, show extremely wide confidence intervals that extend across most of the range (0–1), reflecting the instability of estimates based on small samples.
+Overall, the results highlight large disparities in homicide case resolution rates across U.S. cities.
 
 
