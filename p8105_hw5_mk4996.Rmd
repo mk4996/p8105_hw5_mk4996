@@ -101,7 +101,7 @@ This occurs because only extreme sample means tend to be significant.
 As the true mean increases and power approaches 1, this bias becomes smaller.
 
 # Problem 3
-## Data Cleaning
+## Raw Data
 ```{r}
 homi = read_csv("./homicide-data.csv")
 names(homi)
@@ -117,18 +117,19 @@ homi |>
 ```
 There're two errors in cities and states. Modify them below:
 
+## Cleaned the data
 ```{r}
-homi = homi |>
+homi_clean = homi |>
   mutate(state = toupper(state),
          city_state = str_c(city, ", ", state)) |>   
   filter(city_state != "Tulsa, AL")
 ```
 
-## Raw Data
+## Calculation, making a table
 
 ```{r}
 unsolved_levels = c("Closed without arrest", "Open/No arrest")
-city_summary = homi %>%
+city_summary = homi_clean |>
   mutate(
     city_state = paste(city, state, sep = ", "),
     unsolved  = disposition %in% unsolved_levels
@@ -136,8 +137,7 @@ city_summary = homi %>%
   group_by(city_state) |>
   summarise(
     n_total    = n(),
-    n_unsolved = sum(unsolved),
-    .groups = "drop"
+    n_unsolved = sum(unsolved)
   ) |>
   mutate(prop_unsolved = n_unsolved / n_total)
 
@@ -162,7 +162,7 @@ library(broom)
 
 unsolved_levels = c("Closed without arrest", "Open/No arrest")
 
-bal_counts = homi |>
+bal_counts = homi_clean |>
   filter(city == "Baltimore", state == "MD") |>
   mutate(unsolved = disposition %in% unsolved_levels) |>
   summarise(
@@ -180,11 +180,11 @@ bal_tidy
 ## All cities 
 ```{r}
 
-homi = homi |>
+homi_allcities = homi_clean |>
   mutate(city_state = paste(city, state, sep = ", "))
 
 unsolved_levels = c("Closed without arrest", "Open/No arrest")
-city_summary = homi |>
+city_summary = homi_allcities |>
   mutate(unsolved = disposition %in% unsolved_levels) |>
   group_by(city_state) |>
   summarize(
@@ -224,12 +224,4 @@ city_est |>
        title = "Unsolved homicide proportion by city")
 
 ```
-
-* **Comment**
-
-The plot shows the estimated proportions of unsolved homicides with 95% confidence intervals for each city.
-There is substantial variation across cities, for example, Baltimore, MD and Chicago, IL have some of the highest proportions of unsolved cases, while Richmond, VA and Tulsa, AL have the lowest.
-Cities with small numbers of total homicides, such as Tulsa, show extremely wide confidence intervals that extend across most of the range (0–1), reflecting the instability of estimates based on small samples.
-Overall, the results highlight large disparities in homicide case resolution rates across U.S. cities.
-
 
