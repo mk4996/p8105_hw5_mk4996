@@ -124,6 +124,31 @@ homi = homi |>
   filter(city_state != "Tulsa, AL")
 ```
 
+## Raw Data
+
+```{r}
+unsolved_levels = c("Closed without arrest", "Open/No arrest")
+city_summary = homi %>%
+  mutate(
+    city_state = paste(city, state, sep = ", "),
+    unsolved  = disposition %in% unsolved_levels
+  ) |>
+  group_by(city_state) |>
+  summarise(
+    n_total    = n(),
+    n_unsolved = sum(unsolved),
+    .groups = "drop"
+  ) |>
+  mutate(prop_unsolved = n_unsolved / n_total)
+
+city_summary |>
+  arrange(desc(n_total)) |>
+  knitr::kable(digits = 3,
+               col.names = c("City, State", "Total", "Unsolved", "Prop. Unsolved"))
+```
+
+
+
 ## Baltimore
 ```{r}
 
