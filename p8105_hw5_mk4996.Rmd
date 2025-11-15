@@ -147,7 +147,13 @@ city_summary |>
                col.names = c("City, State", "Total", "Unsolved", "Prop. Unsolved"))
 ```
 
-
+* **Comment**
+The raw dataset includes *`r nrow(homi)`* homicide records across
+*`r dplyr::n_distinct(homi$city)`* large U.S. cities in
+*`r dplyr::n_distinct(homi$state)`* states/DC.  
+We created `city_state` (e.g., “Baltimore, MD”) and summarized within cities to obtain
+the total number of homicides (*`n_total`*) and the number of unsolved homicides
+(`n_unsolved`), where unsolved is defined as *"Closed without arrest"* or *"Open/No arrest"*.
 
 ## Baltimore
 ```{r}
