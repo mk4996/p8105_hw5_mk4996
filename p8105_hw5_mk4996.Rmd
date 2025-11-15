@@ -101,9 +101,31 @@ This occurs because only extreme sample means tend to be significant.
 As the true mean increases and power approaches 1, this bias becomes smaller.
 
 # Problem 3
-## Baltimore
+## Data Cleaning
 ```{r}
 homi = read_csv("./homicide-data.csv")
+names(homi)
+
+homi |> count(disposition, sort = TRUE)
+```
+There's no  "NA" in disposition.
+
+```{r}
+homi |>
+  distinct(city, state) |>
+  print(n = Inf)
+```
+There're two errors in cities and states. Modify them below:
+
+```{r}
+homi = homi |>
+  mutate(state = toupper(state),
+         city_state = str_c(city, ", ", state)) |>   
+  filter(city_state != "Tulsa, AL")
+```
+
+## Baltimore
+```{r}
 
 library(broom)
 
@@ -123,7 +145,6 @@ bal_tidy = broom::tidy(bal_pt)
 bal_tidy
 
 ```
-
 
 ## All cities 
 ```{r}
