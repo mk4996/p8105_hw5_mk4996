@@ -171,8 +171,12 @@ bal_counts = homi_clean |>
     .groups = "drop"
   )
 
-bal_pt = prop.test(bal_counts$n_unsolved, bal_counts$n_total)
-bal_tidy = broom::tidy(bal_pt)
+bal_pt = bal_counts |> 
+  with(prop.test(n_unsolved, n_total))
+
+bal_tidy = broom::tidy(bal_pt) |>
+  select(estimate, conf.low, conf.high)
+
 bal_tidy
 
 ```
@@ -193,13 +197,14 @@ city_summary = homi_allcities |>
     .groups = "drop"
   )
 
-one_prop = function(x_success, x_total) {
-  pt = prop.test(x_success, x_total)
-  tibble(
-    prop_hat = unname(pt$estimate),
-    ci_low   = pt$conf.int[1],
-    ci_high  = pt$conf.int[2]
-  )
+one_prop = function(success, total) {
+  prop.test(success, total) |>
+    broom::tidy() |>
+    dplyr::transmute(
+      prop_hat = estimate,
+      ci_low   = conf.low,
+      ci_high  = conf.high
+    )
 }
 
 city_est = city_summary |>
