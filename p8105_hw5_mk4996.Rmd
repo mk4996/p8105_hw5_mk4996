@@ -67,7 +67,7 @@ power_df = sim_p2 |>
 power_df |>
   ggplot(aes(x = mu_true, y = power)) +
   geom_line() + geom_point() +
-  labs(x = "True mean (mu)", y = "Power",
+  labs(x = "True mean (mu)", y = "Power (proportion)",
        title = "One-sample t-test power vs effect size")
 ```
 
@@ -89,7 +89,7 @@ avg_df |>
   pivot_longer(-mu_true, names_to = "which", values_to = "avg_mu_hat") |>
   ggplot(aes(x = mu_true, y = avg_mu_hat, color = which)) +
   geom_line() + geom_point() +
-  labs(x = "True mean (mu)", y = "Average of mu_hat",
+  labs(x = "True mean (mu)", y = "Average estimate of mu_hat",
        title = "Selection-induced bias when conditioning on rejection")
 ```
 
@@ -137,23 +137,62 @@ city_summary = homi_clean |>
   group_by(city_state) |>
   summarise(
     n_total    = n(),
-    n_unsolved = sum(unsolved)
+    n_unsolved = sum(unsolved),
+    .groups = "drop"
   ) |>
   mutate(prop_unsolved = n_unsolved / n_total)
 
-city_summary |>
+city_summary1_tbl = city_summary |>
   arrange(desc(n_total)) |>
+  select(city_state, n_total)
+
+city_summary1 = city_summary1_tbl |>
+  knitr::kable(digits = 0,
+               col.names = c("City, State", "Total"))
+city_summary1
+
+city_summary2_tbl = city_summary |>
+  arrange(desc(prop_unsolved)) |>
+  select(city_state, n_unsolved, prop_unsolved)
+
+city_summary2 = city_summary2_tbl  |>
   knitr::kable(digits = 3,
-               col.names = c("City, State", "Total", "Unsolved", "Prop. Unsolved"))
+               col.names = c("City, State", "Unsolved", "Prop. Unsolved"))
+city_summary2
+```
+
+```{r results="hide", message=FALSE}
+library(dplyr)
+
+prop_pct = function(df, city) {
+  x = df |>
+    filter(city_state == city) |>
+    pull(prop_unsolved) |>
+    first() 
+  round(100 * x, 1) 
+}
+
+total_n = function(df, city) {
+  df |>
+    filter(city_state == city) |>
+    pull(n_total) |>
+    first()
+}
+
+chi_total = total_n(city_summary, "Chicago, IL")
+chi_prop  = prop_pct(city_summary, "Chicago, IL")
+bal_prop  = prop_pct(city_summary, "Baltimore, MD")
+nola_prop = prop_pct(city_summary, "New Orleans, LA")
+rich_prop = prop_pct(city_summary, "Richmond, VA")
+charl_prop = prop_pct(city_summary, "Charlotte, NC")
 ```
 
 * **Comment**
 The raw dataset includes *`r nrow(homi)`* homicide records across
 *`r dplyr::n_distinct(homi$city)`* large U.S. cities in
 *`r dplyr::n_distinct(homi$state)`* states/DC.  
-We created `city_state` (e.g., “Baltimore, MD”) and summarized within cities to obtain
-the total number of homicides (*`n_total`*) and the number of unsolved homicides
-(`n_unsolved`), where unsolved is defined as *"Closed without arrest"* or *"Open/No arrest"*.
+I created `city_state` (e.g., “Baltimore, MD”) and summarized within cities to obtain the total number of homicides (*`n_total`*) and the number of unsolved homicides (`n_unsolved`), where unsolved is defined as *"Closed without arrest"* or *"Open/No arrest"*.
+Chicago, IL had the highest total number of homicides (`r format(chi_total, big.mark=",")`) and one of the highest proportions of unsolved cases (`r chi_prop`%), followed by Baltimore, MD (`r bal_prop`%) and New Orleans, LA (`r nola_prop`%). In contrast, Richmond, VA (`r rich_prop`%) and Charlotte, NC (`r charl_prop`%) had the lowest proportions of unsolved cases, highlighting substantial variation across cities.
 
 ## Baltimore
 ```{r}
@@ -214,17 +253,16 @@ city_est = city_summary |>
 city_est |>
   arrange(prop_hat) |>
   mutate(city_state = factor(city_state, levels = city_state),
-  prop_hat = prop_hat * 100,
-    ci_low   = ci_low * 100,
-    ci_high  = ci_high * 100
+  prop_hat = prop_hat ,
+    ci_low   = ci_low ,
+    ci_high  = ci_high
   ) |>
   ggplot(aes(x = city_state, y = prop_hat)) +
   geom_point() +
   geom_errorbar(aes(ymin = ci_low, ymax = ci_high), width = 0) +
   coord_flip() +
-  scale_y_continuous(limits = c(0, 100),  
-                     breaks = seq(0, 100, by = 10),  
-                     labels = function(x) paste0(x, "%")) + 
+  scale_y_continuous(limits = c(0, 1) 
+                     ) + 
   labs(x = NULL, y = "Proportion unsolved (with 95% CI)",
        title = "Unsolved homicide proportion by city")
 
