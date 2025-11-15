@@ -144,7 +144,8 @@ city_summary = homi_clean |>
 
 city_summary1_tbl = city_summary |>
   arrange(desc(n_total)) |>
-  select(city_state, n_total)
+  select(city_state, n_total) |>
+  head(3)
 
 city_summary1 = city_summary1_tbl |>
   knitr::kable(digits = 0,
@@ -153,7 +154,8 @@ city_summary1
 
 city_summary2_tbl = city_summary |>
   arrange(desc(prop_unsolved)) |>
-  select(city_state, n_unsolved, prop_unsolved)
+  select(city_state, n_unsolved, prop_unsolved) |>
+  head(3)
 
 city_summary2 = city_summary2_tbl  |>
   knitr::kable(digits = 3,
@@ -183,8 +185,6 @@ chi_total = total_n(city_summary, "Chicago, IL")
 chi_prop  = prop_pct(city_summary, "Chicago, IL")
 bal_prop  = prop_pct(city_summary, "Baltimore, MD")
 nola_prop = prop_pct(city_summary, "New Orleans, LA")
-rich_prop = prop_pct(city_summary, "Richmond, VA")
-charl_prop = prop_pct(city_summary, "Charlotte, NC")
 ```
 
 * **Comment**
@@ -192,7 +192,7 @@ The raw dataset includes *`r nrow(homi)`* homicide records across
 *`r dplyr::n_distinct(homi$city)`* large U.S. cities in
 *`r dplyr::n_distinct(homi$state)`* states/DC.  
 I created `city_state` (e.g., “Baltimore, MD”) and summarized within cities to obtain the total number of homicides (*`n_total`*) and the number of unsolved homicides (`n_unsolved`), where unsolved is defined as *"Closed without arrest"* or *"Open/No arrest"*.
-Chicago, IL had the highest total number of homicides (`r format(chi_total, big.mark=",")`) and one of the highest proportions of unsolved cases (`r chi_prop`%), followed by Baltimore, MD (`r bal_prop`%) and New Orleans, LA (`r nola_prop`%). In contrast, Richmond, VA (`r rich_prop`%) and Charlotte, NC (`r charl_prop`%) had the lowest proportions of unsolved cases, highlighting substantial variation across cities.
+Chicago, IL had the highest total number of homicides (`r format(chi_total, big.mark=",")`) and one of the highest proportions of unsolved cases (`r chi_prop`%), followed by New Orleans, LA (`r nola_prop`%) and Baltimore, MD (`r bal_prop`%). 
 
 ## Baltimore
 ```{r}
